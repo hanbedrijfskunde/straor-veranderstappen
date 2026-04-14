@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veranderarchitectuur: Van Diagnose naar Ontwerp</title>
+    <!-- Tailwind CSS voor C-Level Consultancy Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#0F172A',
+                            slate: '#334155',
+                            accent: '#2563EB',
+                            gold: '#D97706',
+                            teal: '#0F766E',
+                            light: '#F8FAFC'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        serif: ['Merriweather', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- GSAP voor professionele animaties -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- LeaderLine (leader-line-new fork) voor auto-routed node-edges -->
+    <script src="https://cdn.jsdelivr.net/npm/leader-line-new@1.1.9/leader-line.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap');
+
+        body {
+            background-color: #F8FAFC;
+            color: #0F172A;
+            overflow-x: hidden;
+        }
+
+        /* Scrollytelling Setup */
+        #scrolly {
+            position: relative;
+            display: flex;
+            padding: 1rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        article {
+            position: relative;
+            padding: 0 2rem;
+            width: 50%;
+            z-index: 10;
+        }
+
+        figure {
+            position: sticky;
+            top: 5vh;
+            width: 50%;
+            height: 90vh;
+            margin: 0;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid #E2E8F0;
+        }
+
+        .step {
+            min-height: 100vh;
+            margin-bottom: 20vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0.2;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .step.is-active {
+            opacity: 1;
+        }
+
+        /* Visuele Elementen */
+        .viz-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            padding: 2rem;
+        }
+
+        /* DINAMO Nodes */
+        .node {
+            position: absolute;
+            background: white;
+            border: 2px solid #CBD5E1;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            text-align: center;
+            width: 140px;
+            opacity: 0; /* Hidden by default, managed by GSAP */
+            z-index: 20;
+            overflow-wrap: anywhere; /* breek woorden breder dan 140px (bv. Knowledge/Ability) */
+        }
+
+        .node-dinamo { border-color: #0F172A; border-left: 6px solid #0F172A; }
+        .node-outcome { border-color: #0F766E; border-left: 6px solid #0F766E; }
+        .node-framework { border-color: #2563EB; background-color: #EFF6FF; border-left: 6px solid #2563EB;}
+        
+        /* Socratische Vraag Box */
+        .socratic-box {
+            background-color: #FFFBEB;
+            border-left: 4px solid #D97706;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border-radius: 0 8px 8px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .socratic-box h4 {
+            color: #B45309;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* LeaderLine injecteert zijn eigen SVG's als body-level elementen */
+        .leader-line { z-index: 30; }
+
+        /* C-Level Header */
+        header {
+            background-color: #0F172A;
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        header h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-brand-accent font-bold tracking-widest uppercase text-sm mb-4">Workshop 6: Veranderontwerp</h2>
+            <h1>De Veranderarchitectuur</h1>
+            <p class="text-xl text-slate-300 font-light">De brug slaan tussen organisatie-diagnose (AS-IS) en effectieve veranderinterventies (TO-BE).</p>
+        </div>
+    </header>
+
+    <main id="scrolly">
+        <!-- Scrollende Tekst -->
+        <article>
+            
+            <div class="step" data-step="0">
+                <h2 class="text-3xl font-bold mb-4 text-brand-navy">Diagnose vs. Ontwerp</h2>
+                <p class="text-lg text-brand-slate leading-relaxed">
+                    Als adviseur of verandermanager kom je binnen bij een organisatie met een vraagstuk. De status quo moet worden doorbroken. Maar voordat je interventies ontwerpt, moet je begrijpen <em>wat</em> de huidige situatie is.
+                </p>
+                <p class="text-lg text-brand-slate leading-relaxed mt-4">
+                    In deze module leggen we de relatie tussen het meten van veranderbereidheid (de diagnose) en de frameworks om verandering te realiseren (het ontwerp). Scroll naar beneden om de gelaagdheid van deze theorieën te ontdekken.
+                </p>
+            </div>
+
+            <div class="step" data-step="1">
+                <h2 class="text-3xl font-bold mb-4 text-brand-navy">1. De Nulmeting: Het DINAMO Model</h2>
+                <p class="text-lg text-brand-slate leading-relaxed">
+                    Het DINAMO-model is jouw diagnostische dashboard. Het helpt je om de <strong>veranderbereidheid</strong> in de organisatie te meten aan de hand van drie assen:
+                </p>
+                <ul class="list-disc list-inside mt-4 text-lg text-brand-slate space-y-2">
+                    <li><strong>Moeten:</strong> Externe of interne druk (urgentie).</li>
+                    <li><strong>Willen:</strong> Motivatie en de 'What's in it for me?'.</li>
+                    <li><strong>Kunnen:</strong> Faciliteiten, vaardigheden en capaciteit.</li>
+                </ul>
+                <p class="text-lg text-brand-slate leading-relaxed mt-4">
+                    Dit vormt de veranderbereidheid, wat leidt tot nieuw gedrag en uiteindelijk het gewenste resultaat.
+                </p>
+
+                <div class="socratic-box">
+                    <h4>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        Reflectie voor jouw Casus
+                    </h4>
+                    <p class="text-brand-slate">Stel dat uit jouw DINAMO-diagnose blijkt dat medewerkers de verandering wel <em>willen</em> (hoge score), maar niet <em>kunnen</em>. Hoe beïnvloedt dit de acceptatie van jouw plan als je alleen maar hamert op het "waarom"?</p>
+                </div>
+            </div>
+
+            <div class="step" data-step="2">
+                <h2 class="text-3xl font-bold mb-4 text-brand-navy">2. De Beperking van Diagnose</h2>
+                <p class="text-lg text-brand-slate leading-relaxed">
+                    DINAMO laat zien <strong>waar</strong> de organisatie staat, maar vertelt je niet <strong>hoe</strong> je de organisatie in beweging krijgt. Het is een thermometer, geen medicijn.
+                </p>
+                <p class="text-lg text-brand-slate leading-relaxed mt-4">
+                    Om de scores op Moeten, Willen en Kunnen te beïnvloeden, hebben we actiegerichte verander-interventies nodig. Hiervoor gebruiken we de frameworks van Lewin, ADKAR en Kotter. We gaan deze frameworks nu mappen óp onze diagnose.
+                </p>
+            </div>
+
+            <div class="step" data-step="3">
+                <h2 class="text-3xl font-bold mb-4 text-brand-navy">3. Lewin: Het IJs Breken</h2>
+                <p class="text-lg text-brand-slate leading-relaxed">
+                    Kurt Lewin (Unfreeze, Change, Refreeze) is fundamenteel en hoogover. Als we dit over de diagnose leggen:
+                </p>
+                <ul class="list-disc list-inside mt-4 text-lg text-brand-slate space-y-2">
+                    <li><strong>Unfreeze:</strong> Richt zich vol op het verhogen van <em>Moeten</em> en <em>Willen</em>. Het doorbreken van de status quo.</li>
+                    <li><strong>Change:</strong> Het creëren van de voorwaarden voor <em>Kunnen</em> en experimenteren met <em>Gedrag</em>.</li>
+                    <li><strong>Refreeze:</strong> Het borgen van het behaalde <em>Resultaat</em>.</li>
+                </ul>
+
+                <div class="socratic-box">
+                    <h4>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        Reflectie voor jouw Casus
+                    </h4>
+                    <p class="text-brand-slate">Welke interventie(s) zet jij in bij jouw opdrachtgever om de organisatie te "ontdooien" (Unfreeze)? En hoe meten we of de "Moeten" score in DINAMO daadwerkelijk is gestegen na deze interventie?</p>
+                </div>
+            </div>
+
+            <div class="step" data-step="4">
+                <h2 class="text-3xl font-bold mb-4 text-brand-navy">4. ADKAR: De Individuele Reis</h2>
+                <p class="text-lg text-brand-slate leading-relaxed">
+                    PROSCI's ADKAR model is zeer concreet en richt zich op het individu. Het is nagenoeg een één-op-één spiegel van de DINAMO factoren, maar dan geformuleerd als stappenplan:
+                </p>
+                <ul class="list-none mt-4 text-lg text-brand-slate space-y-3">
+                    <li><strong class="text-brand-accent">A</strong>wareness ➜ Bouwt urgentie (<strong>Moeten</strong>)</li>
+                    <li><strong class="text-brand-accent">D</strong>esire ➜ Creëert motivatie (<strong>Willen</strong>)</li>
+                    <li><strong class="text-brand-accent">K</strong>nowledge & <strong class="text-brand-accent">A</strong>bility ➜ Faciliteert het (<strong>Kunnen</strong>)</li>
+                    <li><strong class="text-brand-accent">R</strong>einforcement ➜ Borgt het (<strong>Gedrag & Resultaat</strong>)</li>
+                </ul>
+
+                <div class="socratic-box">
+                    <h4>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        Reflectie voor jouw Casus
+                    </h4>
+                    <p class="text-brand-slate">Als ADKAR een chronologisch proces is, wat gebeurt er met je project als je investeert in training (Knowledge/Kunnen) terwijl stakeholders de nut en noodzaak (Awareness/Moeten) nog ontkennen?</p>
+                </div>
+            </div>
+
+            <div class="step" data-step="5">
+                <h2 class="text-3xl font-bold mb-4 text-brand-navy">5. Kotter's 8 Stappen (Veranderontwerp)</h2>
+                <p class="text-lg text-brand-slate leading-relaxed">
+                    Kotter is het leiderschapsperspectief. Hoe map je zijn 8 stappen op jouw DINAMO diagnose?
+                </p>
+                <p class="text-lg text-brand-slate leading-relaxed mt-2">
+                    <strong>Stap 1 t/m 3 (Klimaat creëren):</strong> Urgentie, Leidende Coalitie en Visie zijn de zwaarste interventies om <em>Moeten</em> en <em>Willen</em> aan te wakkeren.
+                </p>
+                <p class="text-lg text-brand-slate leading-relaxed mt-2">
+                    <strong>Stap 4 t/m 6 (Betrekken & Instaat stellen):</strong> Visie communiceren en belemmeringen wegnemen (empowerment). Dit is direct gekoppeld aan het verhogen van het <em>Kunnen</em> en het uitlokken van eerste nieuw <em>Gedrag</em> (Quick Wins).
+                </p>
+                <p class="text-lg text-brand-slate leading-relaxed mt-2">
+                    <strong>Stap 7 & 8 (Implementeren & Borgen):</strong> Consolideren en verankeren in de cultuur. Dit garandeert het langetermijn <em>Resultaat</em>.
+                </p>
+
+                <div class="socratic-box">
+                    <h4>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        Reflectie voor jouw Casus
+                    </h4>
+                    <p class="text-brand-slate">Kijk naar de opdrachtgever voor jouw veranderontwerp. Welke van de Kotter sponsors (Leidende Coalitie) heb jij nodig om een structureel tekort in de "Kunnen"-as van DINAMO op te lossen? Informeel of Formeel?</p>
+                </div>
+            </div>
+            
+            <div class="step" data-step="6">
+                <h2 class="text-3xl font-bold mb-4 text-brand-navy">Synthese: Jouw Rol als Adviseur</h2>
+                <p class="text-lg text-brand-slate leading-relaxed">
+                    Een goed veranderontwerp is niet het blind toepassen van Kotter of ADKAR. Een goed ontwerp start met de diagnose (DINAMO).
+                </p>
+                <p class="text-lg text-brand-slate leading-relaxed mt-4">
+                    Je zet specifieke interventies uit de veranderraamwerken in, exact op die assen waar jouw diagnose zwaktes vertoont. Is 'Willen' laag? Bouw een betere visie (Kotter 3) of verhoog Desire (ADKAR). Is 'Kunnen' laag? Empower actie (Kotter 5).
+                </p>
+                <div class="mt-8 p-6 bg-brand-navy text-white rounded-lg shadow-lg text-center">
+                    <h3 class="text-xl font-bold mb-2">Opdracht</h3>
+                    <p>Gebruik deze logica om het "Veranderontwerp" voor jouw actuele bedrijfsopdracht op te stellen.</p>
+                </div>
+            </div>
+
+        </article>
+
+        <!-- Sticky Visualisatie (Canvas) -->
+        <figure id="viz-canvas">
+            <div class="viz-container" id="viz-container">
+                <!-- DINAMO Nodes -->
+                <div class="node node-dinamo" id="node-moeten">Moeten<br><span class="text-xs font-normal text-slate-500">Urgentie</span></div>
+                <div class="node node-dinamo" id="node-willen">Willen<br><span class="text-xs font-normal text-slate-500">Motivatie</span></div>
+                <div class="node node-dinamo" id="node-kunnen">Kunnen<br><span class="text-xs font-normal text-slate-500">Faciliteiten</span></div>
+                
+                <div class="node node-outcome" id="node-bereidheid">Verander-<br>bereidheid</div>
+                <div class="node node-outcome" id="node-gedrag">Nieuw<br>Gedrag</div>
+                <div class="node node-outcome" id="node-resultaat">Gewenst<br>Resultaat</div>
+
+                <!-- Framework Nodes (Dynamically populated/changed based on step) -->
+                <div class="node node-framework" id="fw-node-1"></div>
+                <div class="node node-framework" id="fw-node-2"></div>
+                <div class="node node-framework" id="fw-node-3"></div>
+                <div class="node node-framework" id="fw-node-4"></div>
+            </div>
+        </figure>
+    </main>
+
+    <script>
+        // DOM Elements
+        const scrolly = document.querySelector("#scrolly");
+        const article = scrolly.querySelector("article");
+        const steps = article.querySelectorAll(".step");
+        const container = document.getElementById("viz-container");
+
+        // Framework Nodes
+        const fw1 = document.getElementById("fw-node-1");
+        const fw2 = document.getElementById("fw-node-2");
+        const fw3 = document.getElementById("fw-node-3");
+        const fw4 = document.getElementById("fw-node-4");
+
+        // Layout instellingen (pas op: x + 140 moet < content-breedte van viz-container)
+        const layout = {
+            centerDinamo: {
+                moeten: { x: 20, y: 120 },
+                willen: { x: 20, y: 280 },
+                kunnen: { x: 20, y: 440 },
+                bereidheid: { x: 180, y: 280 },
+                gedrag: { x: 320, y: 280 },
+                resultaat: { x: 460, y: 280 }
+            },
+            leftDinamo: { // Wanneer ingeklapt om ruimte te maken voor frameworks links
+                moeten: { x: 260, y: 130 },
+                willen: { x: 260, y: 230 },
+                kunnen: { x: 260, y: 330 },
+                bereidheid: { x: 420, y: 230 },
+                gedrag: { x: 420, y: 400 },
+                resultaat: { x: 420, y: 520 }
+            },
+            frameworkStart: { x: 40, y: 250 }
+        };
+
+        // === LineManager: dunne wrapper rond LeaderLine ===
+        // LeaderLine gebruikt getBoundingClientRect, dus transforms/padding/sticky-scroll
+        // worden automatisch correct verwerkt. Aanhechtingspunten worden per lijn via
+        // socket:'auto' gekozen (top/right/bottom/left — wat het dichtst is).
+        const BASE_STYLE = {
+            color: '#94A3B8', size: 2, path: 'fluid',
+            dash: { len: 6, gap: 6 },
+            startSocket: 'auto', endSocket: 'auto',
+            startPlug: 'behind', endPlug: 'behind'
+        };
+        const MAPPING_STYLE = {
+            color: '#2563EB', size: 3, path: 'fluid',
+            startSocket: 'auto', endSocket: 'auto',
+            startPlug: 'behind', endPlug: 'arrow2', endPlugSize: 1.5
+        };
+
+        const LineManager = (() => {
+            const lines = new Map();    // id -> { line, from, to }
+            const visible = new Set();
+
+            function ensure(id, fromEl, toEl, style) {
+                if (!fromEl || !toEl) return;
+                const existing = lines.get(id);
+                if (existing) {
+                    if (existing.from === fromEl && existing.to === toEl) {
+                        if (!visible.has(id)) { existing.line.show('fade'); visible.add(id); }
+                        return;
+                    }
+                    existing.line.remove();
+                    lines.delete(id);
+                }
+                const line = new LeaderLine(fromEl, toEl, Object.assign({ hide: true }, style));
+                line.show('fade');
+                lines.set(id, { line, from: fromEl, to: toEl });
+                visible.add(id);
+            }
+            function hide(id) {
+                const entry = lines.get(id);
+                if (entry && visible.has(id)) {
+                    entry.line.hide('fade');
+                    visible.delete(id);
+                }
+            }
+            function hideAll() { [...visible].forEach(hide); }
+            function hideMapping() { ['map-1','map-2','map-3','map-4'].forEach(hide); }
+            function hideBase() { ['base-1','base-2','base-3','base-4','base-5'].forEach(hide); }
+            function reposition() {
+                visible.forEach(id => {
+                    const e = lines.get(id);
+                    if (e) { try { e.line.position(); } catch(_) {} }
+                });
+            }
+            return { ensure, hide, hideAll, hideMapping, hideBase, reposition };
+        })();
+
+        // Repositioneer lijnen tijdens animaties én bij scroll/resize
+        gsap.ticker.add(LineManager.reposition);
+        window.addEventListener('scroll', LineManager.reposition, { passive: true });
+        window.addEventListener('resize', LineManager.reposition);
+
+        const N = id => document.getElementById(id);
+
+        // Moeten/Kunnen → Bereidheid: expliciete sockets zodat bogen netjes boven/onder
+        // Willen omlopen in beide layouts (centerDinamo én leftDinamo).
+        const BASE_STYLE_MOETEN = Object.assign({}, BASE_STYLE, {
+            startSocket: 'right', endSocket: 'top'
+        });
+        const BASE_STYLE_KUNNEN = Object.assign({}, BASE_STYLE, {
+            startSocket: 'right', endSocket: 'bottom'
+        });
+
+        function showDinamoLines() {
+            LineManager.ensure('base-1', N('node-moeten'),     N('node-bereidheid'), BASE_STYLE_MOETEN);
+            LineManager.ensure('base-2', N('node-willen'),     N('node-bereidheid'), BASE_STYLE);
+            LineManager.ensure('base-3', N('node-kunnen'),     N('node-bereidheid'), BASE_STYLE_KUNNEN);
+            LineManager.ensure('base-4', N('node-bereidheid'), N('node-gedrag'),     BASE_STYLE);
+            LineManager.ensure('base-5', N('node-gedrag'),     N('node-resultaat'),  BASE_STYLE);
+        }
+
+        function initVisualization() {
+            gsap.set('.node', { opacity: 0 });
+            window.activeStep = 0;
+        }
+
+        function resetFrameworkNodes() {
+            gsap.to('.node-framework', { opacity: 0, duration: 0.3 });
+            LineManager.hideMapping();
+        }
+
+        // Handlers per step
+        const stepHandlers = {
+            0: () => {
+                window.activeStep = 0;
+                gsap.to('.node-dinamo, .node-outcome', { opacity: 0, duration: 0.5 });
+                resetFrameworkNodes();
+                LineManager.hideAll();
+            },
+            1: () => {
+                window.activeStep = 1;
+                resetFrameworkNodes();
+                const pos = layout.centerDinamo;
+                gsap.to('#node-moeten',     { x: pos.moeten.x,     y: pos.moeten.y,     opacity: 1, scale: 1, duration: 0.8 });
+                gsap.to('#node-willen',     { x: pos.willen.x,     y: pos.willen.y,     opacity: 1, scale: 1, duration: 0.8, delay: 0.1 });
+                gsap.to('#node-kunnen',     { x: pos.kunnen.x,     y: pos.kunnen.y,     opacity: 1, scale: 1, duration: 0.8, delay: 0.2 });
+                gsap.to('#node-bereidheid', { x: pos.bereidheid.x, y: pos.bereidheid.y, opacity: 1, scale: 1, duration: 0.8, delay: 0.5 });
+                gsap.to('#node-gedrag',     { x: pos.gedrag.x,     y: pos.gedrag.y,     opacity: 1, scale: 1, duration: 0.8, delay: 0.7 });
+                gsap.to('#node-resultaat',  { x: pos.resultaat.x,  y: pos.resultaat.y,  opacity: 1, scale: 1, duration: 0.8, delay: 0.9 });
+                gsap.delayedCall(1.0, showDinamoLines);
+            },
+            2: () => {
+                window.activeStep = 2;
+                resetFrameworkNodes();
+                const pos = layout.leftDinamo;
+                // Zorg dat DINAMO zichtbaar is (edge case: jump vanaf step 0)
+                gsap.to('.node-dinamo, .node-outcome', { opacity: 1, scale: 1, duration: 0.4 });
+                gsap.to('#node-moeten',     { x: pos.moeten.x,     y: pos.moeten.y,     duration: 0.8, ease: "power2.inOut" });
+                gsap.to('#node-willen',     { x: pos.willen.x,     y: pos.willen.y,     duration: 0.8, ease: "power2.inOut" });
+                gsap.to('#node-kunnen',     { x: pos.kunnen.x,     y: pos.kunnen.y,     duration: 0.8, ease: "power2.inOut" });
+                gsap.to('#node-bereidheid', { x: pos.bereidheid.x, y: pos.bereidheid.y, duration: 0.8, ease: "power2.inOut" });
+                gsap.to('#node-gedrag',     { x: pos.gedrag.x,     y: pos.gedrag.y,     duration: 0.8, ease: "power2.inOut" });
+                gsap.to('#node-resultaat',  { x: pos.resultaat.x,  y: pos.resultaat.y,  duration: 0.8, ease: "power2.inOut" });
+                showDinamoLines();
+            },
+            3: () => {
+                // LEWIN
+                window.activeStep = 3;
+                resetFrameworkNodes();
+
+                fw1.innerHTML = "<strong>Unfreeze</strong><br><span class='text-xs'>Status Quo doorbreken</span>";
+                fw2.innerHTML = "<strong>Change</strong><br><span class='text-xs'>Nieuwe werk-wijzen</span>";
+                fw3.innerHTML = "<strong>Refreeze</strong><br><span class='text-xs'>Nieuw ankerpunt</span>";
+
+                gsap.set(fw1, { x: 40, y: 120 });
+                gsap.set(fw2, { x: 40, y: 280 });
+                gsap.set(fw3, { x: 40, y: 460 });
+
+                gsap.to([fw1, fw2, fw3], { opacity: 1, duration: 0.5, stagger: 0.2, onComplete: () => {
+                    LineManager.ensure('map-1', fw1, N('node-moeten'),    MAPPING_STYLE);
+                    LineManager.ensure('map-2', fw2, N('node-kunnen'),    MAPPING_STYLE);
+                    LineManager.ensure('map-3', fw3, N('node-resultaat'), MAPPING_STYLE);
+                }});
+            },
+            4: () => {
+                // ADKAR
+                window.activeStep = 4;
+                resetFrameworkNodes();
+
+                fw1.innerHTML = "<strong>Awareness</strong><br><span class='text-xs'>Bewustzijn</span>";
+                fw2.innerHTML = "<strong>Desire</strong><br><span class='text-xs'>Verlangen</span>";
+                fw3.innerHTML = "<strong>Knowledge/Ability</strong><br><span class='text-xs'>Kennis & Kunde</span>";
+                fw4.innerHTML = "<strong>Reinforcement</strong><br><span class='text-xs'>Borging</span>";
+
+                gsap.set(fw1, { x: 40, y: 80 });
+                gsap.set(fw2, { x: 40, y: 210 });
+                gsap.set(fw3, { x: 40, y: 340 });
+                gsap.set(fw4, { x: 40, y: 480 });
+
+                gsap.to([fw1, fw2, fw3, fw4], { opacity: 1, duration: 0.4, stagger: 0.15, onComplete: () => {
+                    LineManager.ensure('map-1', fw1, N('node-moeten'), MAPPING_STYLE);
+                    LineManager.ensure('map-2', fw2, N('node-willen'), MAPPING_STYLE);
+                    LineManager.ensure('map-3', fw3, N('node-kunnen'), MAPPING_STYLE);
+                    LineManager.ensure('map-4', fw4, N('node-gedrag'), MAPPING_STYLE);
+                }});
+            },
+            5: () => {
+                // KOTTER
+                window.activeStep = 5;
+                resetFrameworkNodes();
+
+                fw1.innerHTML = "<strong>Stap 1-3</strong><br><span class='text-xs'>Urgentie, Coalitie, Visie</span>";
+                fw2.innerHTML = "<strong>Stap 4-6</strong><br><span class='text-xs'>Comm., Empower, Wins</span>";
+                fw3.innerHTML = "<strong>Stap 7-8</strong><br><span class='text-xs'>Consolideer, Borg</span>";
+
+                gsap.set(fw1, { x: 40, y: 120 });
+                gsap.set(fw2, { x: 40, y: 280 });
+                gsap.set(fw3, { x: 40, y: 460 });
+
+                gsap.to([fw1, fw2, fw3], { opacity: 1, duration: 0.4, stagger: 0.2, onComplete: () => {
+                    LineManager.ensure('map-1', fw1, N('node-moeten'),    MAPPING_STYLE);
+                    LineManager.ensure('map-2', fw2, N('node-kunnen'),    MAPPING_STYLE);
+                    LineManager.ensure('map-3', fw3, N('node-resultaat'), MAPPING_STYLE);
+                }});
+            },
+            6: () => {
+                // Synthese: frameworks volledig verbergen (matcht de kernboodschap
+                // "start bij diagnose, niet bij frameworks"), nadruk op DINAMO.
+                window.activeStep = 6;
+                gsap.to('.node-framework', { opacity: 0, duration: 0.5 });
+                LineManager.hideMapping();
+                gsap.to('.node-dinamo, .node-outcome', { opacity: 1, scale: 1.05, duration: 0.5 });
+                showDinamoLines();
+            }
+        };
+
+        // Scroll Observer: gebruik een smalle band rond het midden (50%) van de viewport.
+        // Threshold 0 zorgt dat de observer triggert zodra een step die middenlijn kruist —
+        // essentieel omdat .step elementen (100vh hoog) nooit 50% kunnen vullen in een band <100vh.
+        const observerOptions = {
+            root: null,
+            rootMargin: "-45% 0px -45% 0px",
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Update active class on text
+                    steps.forEach(s => s.classList.remove('is-active'));
+                    entry.target.classList.add('is-active');
+
+                    // Trigger visualization
+                    const stepIndex = parseInt(entry.target.getAttribute('data-step'));
+                    if(stepHandlers[stepIndex]) {
+                        stepHandlers[stepIndex]();
+                    }
+                }
+            });
+        }, observerOptions);
+
+        // Initialize
+        window.addEventListener('load', () => {
+            initVisualization();
+            steps.forEach(step => observer.observe(step));
+        });
+
+    </script>
+</body>
+</html>
