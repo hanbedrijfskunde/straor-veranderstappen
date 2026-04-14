@@ -32,6 +32,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <!-- LeaderLine (leader-line-new fork) voor auto-routed node-edges -->
     <script src="https://cdn.jsdelivr.net/npm/leader-line-new@1.1.9/leader-line.min.js"></script>
+    <!-- QRCode.js voor client-side QR generatie -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap');
 
@@ -93,6 +95,14 @@
             width: 100%;
             height: 100%;
             padding: 2rem;
+        }
+        /* viz-stage: bevat alle DINAMO/framework nodes. Kan los geschaald worden
+           op mobiel zonder de intro-diag (met sliders) mee te schalen. */
+        .viz-stage {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-origin: top left;
         }
 
         /* DINAMO Nodes */
@@ -249,9 +259,175 @@
             font-size: 3rem;
             margin-bottom: 1rem;
         }
+
+        /* === Landing section: URL + QR === */
+        .landing {
+            min-height: 100vh;
+            background: radial-gradient(ellipse at 50% 30%, #1E293B 0%, #0F172A 60%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1.5rem;
+        }
+        .landing-inner {
+            max-width: 880px;
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+        .landing-kicker {
+            color: #2563EB;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            font-size: 0.85rem;
+        }
+        .landing-title {
+            font-family: 'Merriweather', serif;
+            font-size: clamp(1.8rem, 3.6vw, 2.8rem);
+            font-weight: 300;
+            color: #CBD5E1;
+            line-height: 1.25;
+        }
+        .landing-url {
+            font-family: 'Merriweather', serif;
+            font-weight: 700;
+            font-size: clamp(1.6rem, 4.2vw, 3rem);
+            letter-spacing: -0.01em;
+            word-break: break-word;
+            line-height: 1.2;
+        }
+        .landing-url .u-dim { color: rgba(255,255,255,0.38); }
+        .landing-url .u-emph {
+            color: #FBBF24;
+            position: relative;
+            padding: 0 0.08em;
+        }
+        .landing-url .u-emph::after {
+            content: "";
+            position: absolute;
+            left: 0; right: 0; bottom: -0.08em;
+            height: 6px;
+            background: linear-gradient(90deg, #D97706 0%, #FBBF24 100%);
+            border-radius: 3px;
+            opacity: 0.55;
+        }
+        .landing-qr {
+            background: white;
+            padding: 14px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            line-height: 0;
+        }
+        .landing-qr img, .landing-qr canvas { display: block; }
+        .landing-hint {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.95rem;
+            animation: hint-bounce 2.4s ease-in-out infinite;
+        }
+        @keyframes hint-bounce {
+            0%, 100% { transform: translateY(0); opacity: 0.6; }
+            50%      { transform: translateY(6px); opacity: 1; }
+        }
+
+        /* === Responsive: tablet en mobiel === */
+        @media (max-width: 900px) {
+            header { padding: 2.5rem 1.25rem; }
+            header h1 { font-size: 2rem; }
+            header p { font-size: 1rem; }
+
+            #scrolly {
+                flex-direction: column;
+                padding: 0;
+                max-width: 100%;
+            }
+            article {
+                width: 100%;
+                padding: 0 1.25rem;
+                order: 2;
+                z-index: 1;        /* moet ONDER de sticky figure staan */
+                background: #F8FAFC; /* solide bg anders schijnen nodes door */
+            }
+            figure {
+                position: sticky;
+                top: 0;
+                width: 100%;
+                height: 55vh;
+                margin: 0;
+                border-radius: 0;
+                border-left: 0;
+                border-right: 0;
+                order: 1;
+                z-index: 10;       /* dekt article af wanneer die eronder scrollt */
+            }
+            .viz-container { padding: 0.75rem; }
+            /* Canvas-content is ontworpen voor ~620px; schaal op mobiel zodat
+               alles binnen de kleinere figure past. LeaderLine gebruikt
+               getBoundingClientRect en volgt de schaal automatisch. */
+            .viz-stage { transform: scale(0.75); }
+
+            .step {
+                min-height: auto;
+                padding: 3rem 0;
+                margin-bottom: 0;
+            }
+            .step h2 { font-size: 1.5rem; }
+            .step p, .step li { font-size: 1rem; line-height: 1.5; }
+
+            .intro-diag {
+                inset: 0.75rem;
+                padding: 1.1rem;
+                gap: 0.85rem;
+            }
+            .diag-title { font-size: 1.1rem; }
+            .diag-sub { font-size: 0.8rem; }
+            .slider-row {
+                grid-template-columns: 90px 1fr 28px;
+                gap: 0.5rem;
+            }
+            .slider-row label { font-size: 0.85rem; }
+            .slider-row label small { font-size: 0.7rem; }
+            .slider-val { font-size: 1rem; }
+            .meter-score { font-size: 1.2rem; }
+
+            .score-badge {
+                min-width: 22px; height: 22px;
+                font-size: 0.72rem;
+                top: -8px; right: -8px;
+            }
+        }
+        @media (max-width: 650px) {
+            .viz-stage { transform: scale(0.6); }
+        }
+        @media (max-width: 500px) {
+            header h1 { font-size: 1.6rem; }
+            figure { height: 50vh; }
+            .viz-stage { transform: scale(0.52); }
+            .intro-diag { padding: 0.9rem; gap: 0.6rem; }
+            .slider-row { grid-template-columns: 80px 1fr 26px; }
+        }
+        @media (max-width: 380px) {
+            .viz-stage { transform: scale(0.45); }
+        }
     </style>
 </head>
 <body>
+
+    <section id="landing" class="landing">
+        <div class="landing-inner">
+            <p class="landing-kicker">Workshop 6 · Veranderontwerp</p>
+            <h2 class="landing-title">Open deze workshop op je eigen laptop</h2>
+            <div class="landing-url">
+                <span class="u-dim">hanbedrijfskunde.github.io/</span><span class="u-emph">straor-veranderstappen</span><span class="u-dim">/</span>
+            </div>
+            <div class="landing-qr" id="qr-code" aria-label="QR-code naar workshop URL"></div>
+            <p class="landing-hint">Scroll om te starten ↓</p>
+        </div>
+    </section>
 
     <header>
         <div class="max-w-4xl mx-auto">
@@ -430,20 +606,22 @@
                     </div>
                 </div>
 
-                <!-- DINAMO Nodes -->
-                <div class="node node-dinamo" id="node-moeten"><span class="score-badge" id="badge-moeten">5</span>Moeten<br><span class="text-xs font-normal text-slate-500">Urgentie</span></div>
-                <div class="node node-dinamo" id="node-willen"><span class="score-badge" id="badge-willen">5</span>Willen<br><span class="text-xs font-normal text-slate-500">Motivatie</span></div>
-                <div class="node node-dinamo" id="node-kunnen"><span class="score-badge" id="badge-kunnen">5</span>Kunnen<br><span class="text-xs font-normal text-slate-500">Faciliteiten</span></div>
-                
-                <div class="node node-outcome" id="node-bereidheid">Verander-<br>bereidheid</div>
-                <div class="node node-outcome" id="node-gedrag">Nieuw<br>Gedrag</div>
-                <div class="node node-outcome" id="node-resultaat">Gewenst<br>Resultaat</div>
+                <div class="viz-stage" id="viz-stage">
+                    <!-- DINAMO Nodes -->
+                    <div class="node node-dinamo" id="node-moeten"><span class="score-badge" id="badge-moeten">5</span>Moeten<br><span class="text-xs font-normal text-slate-500">Urgentie</span></div>
+                    <div class="node node-dinamo" id="node-willen"><span class="score-badge" id="badge-willen">5</span>Willen<br><span class="text-xs font-normal text-slate-500">Motivatie</span></div>
+                    <div class="node node-dinamo" id="node-kunnen"><span class="score-badge" id="badge-kunnen">5</span>Kunnen<br><span class="text-xs font-normal text-slate-500">Faciliteiten</span></div>
 
-                <!-- Framework Nodes (Dynamically populated/changed based on step) -->
-                <div class="node node-framework" id="fw-node-1"></div>
-                <div class="node node-framework" id="fw-node-2"></div>
-                <div class="node node-framework" id="fw-node-3"></div>
-                <div class="node node-framework" id="fw-node-4"></div>
+                    <div class="node node-outcome" id="node-bereidheid">Verander-<br>bereidheid</div>
+                    <div class="node node-outcome" id="node-gedrag">Nieuw<br>Gedrag</div>
+                    <div class="node node-outcome" id="node-resultaat">Gewenst<br>Resultaat</div>
+
+                    <!-- Framework Nodes (Dynamically populated/changed based on step) -->
+                    <div class="node node-framework" id="fw-node-1"></div>
+                    <div class="node node-framework" id="fw-node-2"></div>
+                    <div class="node node-framework" id="fw-node-3"></div>
+                    <div class="node node-framework" id="fw-node-4"></div>
+                </div>
             </div>
         </figure>
     </main>
@@ -786,6 +964,16 @@
             updateDiagUI();
             wireSliders();
             steps.forEach(step => observer.observe(step));
+
+            // Landing QR-code (client-side gegenereerd — werkt offline)
+            if (typeof QRCode !== 'undefined') {
+                new QRCode(document.getElementById('qr-code'), {
+                    text: 'https://hanbedrijfskunde.github.io/straor-veranderstappen/',
+                    width: 220, height: 220,
+                    colorDark: '#0F172A', colorLight: '#FFFFFF',
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+            }
         });
 
     </script>
