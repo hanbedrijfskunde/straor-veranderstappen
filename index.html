@@ -235,6 +235,45 @@
         }
         body.show-badges .node-dinamo .score-badge { opacity: 1; }
 
+        /* === Organogram (step 3): sponsoren met M/W/K score-chips === */
+        .org-chart {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s;
+        }
+        .org-chart.is-visible { opacity: 1; pointer-events: auto; }
+        .sponsor {
+            position: absolute;
+            width: 130px;
+            background: white;
+            border: 2px solid #CBD5E1;
+            border-radius: 8px;
+            padding: 0.6rem 0.5rem 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            text-align: center;
+            z-index: 20;
+        }
+        .sponsor-title {
+            font-weight: 700; color: #0F172A;
+            font-size: 0.9rem; line-height: 1.1;
+        }
+        .sponsor-role {
+            font-size: 0.7rem; color: #64748B; margin-top: 2px;
+        }
+        .sponsor-scores {
+            display: flex; gap: 4px; justify-content: center;
+            margin-top: 0.5rem;
+        }
+        .score-chip {
+            width: 22px; height: 22px; border-radius: 50%;
+            color: white; font-size: 0.72rem; font-weight: 700;
+            display: inline-flex; align-items: center; justify-content: center;
+            border: 2px solid white;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
         /* === Synthese-reflectie in step 6 === */
         .synth-recap {
             margin-top: 1.5rem; padding: 1rem 1.25rem;
@@ -485,7 +524,28 @@
             </div>
 
             <div class="step" data-step="3">
-                <h2 class="text-3xl font-bold mb-4 text-brand-navy">3. Lewin: Het IJs Breken</h2>
+                <h2 class="text-3xl font-bold mb-4 text-brand-navy">3. De Werkelijkheid: Sponsoren in Beeld</h2>
+                <p class="text-lg text-brand-slate leading-relaxed">
+                    Eén DINAMO-score over "de organisatie" is een vereenvoudiging. In werkelijkheid heeft <strong>elke sponsor</strong> — CEO, directie, teamleiders — z'n eigen mix van Moeten, Willen en Kunnen. Een veranderontwerp moet die mozaïek adresseren.
+                </p>
+                <p class="text-lg text-brand-slate leading-relaxed mt-4">
+                    In dit voorbeeld zie je een typische structuur. De <strong>CEO</strong> heeft hoge urgentie maar lage kunde op de werkvloer. <strong>Dir. Commercie</strong> is je champion. <strong>Dir. Ops</strong> is de blocker — rode M én W. <strong>Mgr Logistiek</strong> is enthousiast maar onbekwaam.
+                </p>
+                <p class="text-lg text-brand-slate leading-relaxed mt-4">
+                    Dit maakt concreet waarom één interventie niet volstaat: je hebt per sponsor een <em>andere</em> ingreep nodig. De kleuren laten zien welke as bij wie aandacht vraagt.
+                </p>
+
+                <div class="socratic-box">
+                    <h4>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                        Reflectie voor jouw Casus
+                    </h4>
+                    <p class="text-brand-slate">Teken jouw eigen sponsor-map. Wie zitten er in? Welke kleuren krijgen ze op M/W/K? Waar zit je grootste hefboom — een champion versterken of een blocker verleiden?</p>
+                </div>
+            </div>
+
+            <div class="step" data-step="4">
+                <h2 class="text-3xl font-bold mb-4 text-brand-navy">4. Lewin: Het IJs Breken</h2>
                 <p class="text-lg text-brand-slate leading-relaxed">
                     Kurt Lewin (Unfreeze, Change, Refreeze) is fundamenteel en hoogover. Als we dit over de diagnose leggen:
                 </p>
@@ -504,8 +564,8 @@
                 </div>
             </div>
 
-            <div class="step" data-step="4">
-                <h2 class="text-3xl font-bold mb-4 text-brand-navy">4. ADKAR: De Individuele Reis</h2>
+            <div class="step" data-step="5">
+                <h2 class="text-3xl font-bold mb-4 text-brand-navy">5. ADKAR: De Individuele Reis</h2>
                 <p class="text-lg text-brand-slate leading-relaxed">
                     PROSCI's ADKAR model is zeer concreet en richt zich op het individu. Het is nagenoeg een één-op-één spiegel van de DINAMO factoren, maar dan geformuleerd als stappenplan:
                 </p>
@@ -525,8 +585,8 @@
                 </div>
             </div>
 
-            <div class="step" data-step="5">
-                <h2 class="text-3xl font-bold mb-4 text-brand-navy">5. Kotter's 8 Stappen (Veranderontwerp)</h2>
+            <div class="step" data-step="6">
+                <h2 class="text-3xl font-bold mb-4 text-brand-navy">6. Kotter's 8 Stappen (Veranderontwerp)</h2>
                 <p class="text-lg text-brand-slate leading-relaxed">
                     Kotter is het leiderschapsperspectief. Hoe map je zijn 8 stappen op jouw DINAMO diagnose?
                 </p>
@@ -549,7 +609,7 @@
                 </div>
             </div>
             
-            <div class="step" data-step="6">
+            <div class="step" data-step="7">
                 <h2 class="text-3xl font-bold mb-4 text-brand-navy">Synthese: Jouw Rol als Adviseur</h2>
                 <p class="text-lg text-brand-slate leading-relaxed">
                     Een goed veranderontwerp is niet het blind toepassen van Kotter of ADKAR. Een goed ontwerp start met de diagnose (DINAMO).
@@ -607,6 +667,64 @@
                 </div>
 
                 <div class="viz-stage" id="viz-stage">
+                    <!-- Organogram (step 3) — 6 sponsoren met M/W/K score-chips -->
+                    <div class="org-chart" id="org-chart">
+                        <div class="sponsor" id="sp-ceo" style="left: 245px; top: 10px;">
+                            <div class="sponsor-title">CEO</div>
+                            <div class="sponsor-role">Eindverantwoordelijk</div>
+                            <div class="sponsor-scores">
+                                <span class="score-chip" data-key="m" data-score="9">M</span>
+                                <span class="score-chip" data-key="w" data-score="8">W</span>
+                                <span class="score-chip" data-key="k" data-score="3">K</span>
+                            </div>
+                        </div>
+                        <div class="sponsor" id="sp-dir-a" style="left: 70px; top: 160px;">
+                            <div class="sponsor-title">Dir. Commercie</div>
+                            <div class="sponsor-role">Champion</div>
+                            <div class="sponsor-scores">
+                                <span class="score-chip" data-key="m" data-score="8">M</span>
+                                <span class="score-chip" data-key="w" data-score="9">W</span>
+                                <span class="score-chip" data-key="k" data-score="7">K</span>
+                            </div>
+                        </div>
+                        <div class="sponsor" id="sp-dir-b" style="left: 420px; top: 160px;">
+                            <div class="sponsor-title">Dir. Ops</div>
+                            <div class="sponsor-role">Blocker</div>
+                            <div class="sponsor-scores">
+                                <span class="score-chip" data-key="m" data-score="3">M</span>
+                                <span class="score-chip" data-key="w" data-score="2">W</span>
+                                <span class="score-chip" data-key="k" data-score="7">K</span>
+                            </div>
+                        </div>
+                        <div class="sponsor" id="sp-mgr-x" style="left: 10px; top: 320px;">
+                            <div class="sponsor-title">Mgr Sales</div>
+                            <div class="sponsor-role">Mixed</div>
+                            <div class="sponsor-scores">
+                                <span class="score-chip" data-key="m" data-score="7">M</span>
+                                <span class="score-chip" data-key="w" data-score="6">W</span>
+                                <span class="score-chip" data-key="k" data-score="4">K</span>
+                            </div>
+                        </div>
+                        <div class="sponsor" id="sp-mgr-y" style="left: 160px; top: 320px;">
+                            <div class="sponsor-title">Mgr Marketing</div>
+                            <div class="sponsor-role">Passief</div>
+                            <div class="sponsor-scores">
+                                <span class="score-chip" data-key="m" data-score="4">M</span>
+                                <span class="score-chip" data-key="w" data-score="3">W</span>
+                                <span class="score-chip" data-key="k" data-score="5">K</span>
+                            </div>
+                        </div>
+                        <div class="sponsor" id="sp-mgr-z" style="left: 420px; top: 320px;">
+                            <div class="sponsor-title">Mgr Logistiek</div>
+                            <div class="sponsor-role">Enthousiast, onbekwaam</div>
+                            <div class="sponsor-scores">
+                                <span class="score-chip" data-key="m" data-score="9">M</span>
+                                <span class="score-chip" data-key="w" data-score="8">W</span>
+                                <span class="score-chip" data-key="k" data-score="2">K</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- DINAMO Nodes -->
                     <div class="node node-dinamo" id="node-moeten"><span class="score-badge" id="badge-moeten">5</span>Moeten<br><span class="text-xs font-normal text-slate-500">Urgentie</span></div>
                     <div class="node node-dinamo" id="node-willen"><span class="score-badge" id="badge-willen">5</span>Willen<br><span class="text-xs font-normal text-slate-500">Motivatie</span></div>
@@ -814,9 +932,56 @@
             });
         }
 
+        // Pas de urgency-kleuren toe op alle score-chips in het organogram (eenmalig bij load)
+        function colorizeOrgChips() {
+            document.querySelectorAll('#org-chart .score-chip').forEach(el => {
+                const s = Number(el.dataset.score);
+                el.style.background = urgencyColor(s);
+                el.title = el.textContent + ' = ' + s;
+            });
+        }
+
+        // Hierarchie-lijnen in het organogram (CEO→Dirs→Mgrs) via LeaderLine
+        const ORG_LINK_STYLE = {
+            color: '#94A3B8', size: 2, path: 'grid',
+            startSocket: 'bottom', endSocket: 'top',
+            startPlug: 'behind', endPlug: 'behind'
+        };
+        function showOrgChart() {
+            const orgLinks = [
+                ['org-1', 'sp-ceo',   'sp-dir-a'],
+                ['org-2', 'sp-ceo',   'sp-dir-b'],
+                ['org-3', 'sp-dir-a', 'sp-mgr-x'],
+                ['org-4', 'sp-dir-a', 'sp-mgr-y'],
+                ['org-5', 'sp-dir-b', 'sp-mgr-z']
+            ];
+            orgLinks.forEach(([id, from, to]) => {
+                LineManager.ensure(id, N(from), N(to), ORG_LINK_STYLE);
+            });
+        }
+        function hideOrgChart() {
+            ['org-1','org-2','org-3','org-4','org-5'].forEach(LineManager.hide);
+        }
+
+        // Zorg dat DINAMO zichtbaar staat op de left-layout (gebruikt door framework-steps)
+        function ensureDinamoLeft() {
+            const pos = layout.leftDinamo;
+            gsap.to('.node-dinamo, .node-outcome', { opacity: 1, scale: 1, duration: 0.4 });
+            gsap.to('#node-moeten',     { x: pos.moeten.x,     y: pos.moeten.y,     duration: 0.6, ease: "power2.inOut" });
+            gsap.to('#node-willen',     { x: pos.willen.x,     y: pos.willen.y,     duration: 0.6, ease: "power2.inOut" });
+            gsap.to('#node-kunnen',     { x: pos.kunnen.x,     y: pos.kunnen.y,     duration: 0.6, ease: "power2.inOut" });
+            gsap.to('#node-bereidheid', { x: pos.bereidheid.x, y: pos.bereidheid.y, duration: 0.6, ease: "power2.inOut" });
+            gsap.to('#node-gedrag',     { x: pos.gedrag.x,     y: pos.gedrag.y,     duration: 0.6, ease: "power2.inOut" });
+            gsap.to('#node-resultaat',  { x: pos.resultaat.x,  y: pos.resultaat.y,  duration: 0.6, ease: "power2.inOut" });
+            showDinamoLines();
+        }
+
         function resetFrameworkNodes() {
             gsap.to('.node-framework', { opacity: 0, duration: 0.3 });
             LineManager.hideMapping();
+            // Organogram-laag altijd verbergen; step 3 zet hem daarna zelf weer aan
+            document.getElementById('org-chart').classList.remove('is-visible');
+            hideOrgChart();
         }
 
         // Handlers per step
@@ -856,9 +1021,21 @@
                 showDinamoLines();
             },
             3: () => {
-                // LEWIN
+                // ORGANOGRAM: sponsoren in beeld
                 window.activeStep = 3;
                 resetFrameworkNodes();
+                // DINAMO-nodes verbergen zodat het organogram de stage krijgt
+                gsap.to('.node-dinamo, .node-outcome', { opacity: 0, duration: 0.4 });
+                LineManager.hideBase();
+                document.getElementById('org-chart').classList.add('is-visible');
+                // LeaderLine heeft zichtbare elementen nodig — kleine delay
+                gsap.delayedCall(0.45, showOrgChart);
+            },
+            4: () => {
+                // LEWIN
+                window.activeStep = 4;
+                resetFrameworkNodes();
+                ensureDinamoLeft();
 
                 fw1.innerHTML = "<strong>Unfreeze</strong><br><span class='text-xs'>Status Quo doorbreken</span>";
                 fw2.innerHTML = "<strong>Change</strong><br><span class='text-xs'>Nieuwe werk-wijzen</span>";
@@ -874,10 +1051,11 @@
                     LineManager.ensure('map-3', fw3, N('node-resultaat'), MAPPING_STYLE);
                 }});
             },
-            4: () => {
+            5: () => {
                 // ADKAR
-                window.activeStep = 4;
+                window.activeStep = 5;
                 resetFrameworkNodes();
+                ensureDinamoLeft();
 
                 fw1.innerHTML = "<strong>Awareness</strong><br><span class='text-xs'>Bewustzijn</span>";
                 fw2.innerHTML = "<strong>Desire</strong><br><span class='text-xs'>Verlangen</span>";
@@ -896,10 +1074,11 @@
                     LineManager.ensure('map-4', fw4, N('node-gedrag'), MAPPING_STYLE);
                 }});
             },
-            5: () => {
+            6: () => {
                 // KOTTER
-                window.activeStep = 5;
+                window.activeStep = 6;
                 resetFrameworkNodes();
+                ensureDinamoLeft();
 
                 fw1.innerHTML = "<strong>Stap 1-3</strong><br><span class='text-xs'>Urgentie, Coalitie, Visie</span>";
                 fw2.innerHTML = "<strong>Stap 4-6</strong><br><span class='text-xs'>Comm., Empower, Wins</span>";
@@ -915,10 +1094,10 @@
                     LineManager.ensure('map-3', fw3, N('node-resultaat'), MAPPING_STYLE);
                 }});
             },
-            6: () => {
+            7: () => {
                 // Synthese: frameworks volledig verbergen (matcht de kernboodschap
                 // "start bij diagnose, niet bij frameworks"), nadruk op DINAMO.
-                window.activeStep = 6;
+                window.activeStep = 7;
                 gsap.to('.node-framework', { opacity: 0, duration: 0.5 });
                 LineManager.hideMapping();
                 gsap.to('.node-dinamo, .node-outcome', { opacity: 1, scale: 1.05, duration: 0.5 });
@@ -963,6 +1142,7 @@
             loadScores();
             updateDiagUI();
             wireSliders();
+            colorizeOrgChips();
             steps.forEach(step => observer.observe(step));
 
             // Landing QR-code (client-side gegenereerd — werkt offline)
