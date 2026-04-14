@@ -137,6 +137,105 @@
         /* LeaderLine injecteert zijn eigen SVG's als body-level elementen */
         .leader-line { z-index: 30; }
 
+        /* === Intro-diagnose card (step 0) === */
+        .intro-diag {
+            position: absolute;
+            inset: 1.5rem;
+            padding: 2rem;
+            background: linear-gradient(160deg, #F8FAFC 0%, #EFF6FF 100%);
+            border-radius: 12px;
+            border: 1px solid #E2E8F0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 25;
+            transition: opacity 0.5s;
+        }
+        .intro-diag.is-visible { opacity: 1; pointer-events: auto; }
+        .diag-title { font-family: 'Merriweather', serif; font-size: 1.4rem; color: #0F172A; line-height: 1.3; }
+        .diag-sub { font-size: 0.9rem; color: #475569; line-height: 1.5; }
+        .slider-row {
+            display: grid;
+            grid-template-columns: 120px 1fr 36px;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .slider-row label {
+            font-weight: 600; color: #0F172A; font-size: 0.95rem;
+        }
+        .slider-row label small {
+            display: block; font-weight: 400; font-size: 0.75rem; color: #64748B;
+        }
+        .slider-val {
+            font-family: 'Merriweather', serif; font-weight: 700;
+            font-size: 1.15rem; color: #2563EB; text-align: right;
+        }
+        .intro-diag input[type="range"] {
+            -webkit-appearance: none; appearance: none;
+            width: 100%; height: 6px; border-radius: 3px;
+            background: #E2E8F0; outline: none;
+        }
+        .intro-diag input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 20px; height: 20px; border-radius: 50%;
+            background: #2563EB; border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(37,99,235,0.3);
+            cursor: pointer;
+        }
+        .intro-diag input[type="range"]::-moz-range-thumb {
+            width: 20px; height: 20px; border-radius: 50%;
+            background: #2563EB; border: 3px solid white;
+            box-shadow: 0 2px 4px rgba(37,99,235,0.3);
+            cursor: pointer;
+        }
+        .meter { margin-top: auto; padding-top: 1rem; border-top: 1px solid #E2E8F0; }
+        .meter-label {
+            font-size: 0.8rem; color: #475569;
+            text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem;
+        }
+        .meter-track {
+            position: relative; width: 100%; height: 10px;
+            background: #E2E8F0; border-radius: 5px; overflow: hidden;
+        }
+        .meter-fill {
+            height: 100%; width: 50%;
+            background: linear-gradient(90deg, #0F766E 0%, #2563EB 100%);
+            border-radius: 5px; transition: width 0.4s ease-out;
+        }
+        .meter-score {
+            font-family: 'Merriweather', serif; font-weight: 700;
+            font-size: 1.6rem; color: #0F172A; margin-top: 0.35rem;
+        }
+
+        /* === Score-badges op DINAMO-nodes === */
+        .score-badge {
+            position: absolute;
+            top: -10px; right: -10px;
+            min-width: 26px; height: 26px; padding: 0 6px;
+            background: #2563EB; color: white;
+            border: 2px solid white;
+            border-radius: 999px;
+            font-size: 0.8rem; font-weight: 700;
+            display: inline-flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            opacity: 0; transition: opacity 0.4s;
+            pointer-events: none;
+        }
+        body.show-badges .node-dinamo .score-badge { opacity: 1; }
+
+        /* === Synthese-reflectie in step 6 === */
+        .synth-recap {
+            margin-top: 1.5rem; padding: 1rem 1.25rem;
+            background: #EFF6FF; border-left: 4px solid #2563EB;
+            border-radius: 0 8px 8px 0;
+        }
+        .synth-recap h4 { font-weight: 700; color: #1E3A8A; margin-bottom: 0.5rem; }
+        .synth-scores { display: flex; gap: 1rem; margin: 0.5rem 0; font-size: 0.95rem; }
+        .synth-scores span strong { color: #2563EB; font-size: 1.1rem; margin-right: 0.25rem; }
+        .synth-bereid { font-weight: 600; color: #0F172A; margin-top: 0.5rem; }
+
         /* C-Level Header */
         header {
             background-color: #0F172A;
@@ -282,6 +381,16 @@
                 <p class="text-lg text-brand-slate leading-relaxed mt-4">
                     Je zet specifieke interventies uit de veranderraamwerken in, exact op die assen waar jouw diagnose zwaktes vertoont. Is 'Willen' laag? Bouw een betere visie (Kotter 3) of verhoog Desire (ADKAR). Is 'Kunnen' laag? Empower actie (Kotter 5).
                 </p>
+                <div class="synth-recap">
+                    <h4>Jouw startdiagnose</h4>
+                    <p class="text-sm text-brand-slate">Is jouw inschatting aan het begin nog dezelfde nu je Lewin, ADKAR en Kotter hebt gezien?</p>
+                    <div class="synth-scores">
+                        <span><strong id="recap-moeten">–</strong>Moeten</span>
+                        <span><strong id="recap-willen">–</strong>Willen</span>
+                        <span><strong id="recap-kunnen">–</strong>Kunnen</span>
+                    </div>
+                    <div class="synth-bereid">Veranderbereidheid: <span id="recap-bereid">–</span></div>
+                </div>
                 <div class="mt-8 p-6 bg-brand-navy text-white rounded-lg shadow-lg text-center">
                     <h3 class="text-xl font-bold mb-2">Opdracht</h3>
                     <p>Gebruik deze logica om het "Veranderontwerp" voor jouw actuele bedrijfsopdracht op te stellen.</p>
@@ -293,10 +402,38 @@
         <!-- Sticky Visualisatie (Canvas) -->
         <figure id="viz-canvas">
             <div class="viz-container" id="viz-container">
+                <!-- Intro-diagnose (zichtbaar in step 0) -->
+                <div id="intro-diag" class="intro-diag">
+                    <div>
+                        <h3 class="diag-title">Waar staat jouw opdrachtgever vandaag?</h3>
+                        <p class="diag-sub">Scoor eerst je eigen casus op de drie assen. Je scores blijven als badges zichtbaar op de DINAMO-modellen hieronder en komen terug in de slotsynthese.</p>
+                    </div>
+                    <div class="slider-row">
+                        <label for="slider-moeten">Moeten<small>Urgentie</small></label>
+                        <input type="range" id="slider-moeten" min="0" max="10" step="1" value="5" data-key="moeten">
+                        <span class="slider-val" id="val-moeten">5</span>
+                    </div>
+                    <div class="slider-row">
+                        <label for="slider-willen">Willen<small>Motivatie</small></label>
+                        <input type="range" id="slider-willen" min="0" max="10" step="1" value="5" data-key="willen">
+                        <span class="slider-val" id="val-willen">5</span>
+                    </div>
+                    <div class="slider-row">
+                        <label for="slider-kunnen">Kunnen<small>Faciliteiten</small></label>
+                        <input type="range" id="slider-kunnen" min="0" max="10" step="1" value="5" data-key="kunnen">
+                        <span class="slider-val" id="val-kunnen">5</span>
+                    </div>
+                    <div class="meter">
+                        <div class="meter-label">Veranderbereidheid (geometrisch gemiddelde)</div>
+                        <div class="meter-track"><div class="meter-fill" id="meter-fill"></div></div>
+                        <div class="meter-score" id="meter-score">5.0</div>
+                    </div>
+                </div>
+
                 <!-- DINAMO Nodes -->
-                <div class="node node-dinamo" id="node-moeten">Moeten<br><span class="text-xs font-normal text-slate-500">Urgentie</span></div>
-                <div class="node node-dinamo" id="node-willen">Willen<br><span class="text-xs font-normal text-slate-500">Motivatie</span></div>
-                <div class="node node-dinamo" id="node-kunnen">Kunnen<br><span class="text-xs font-normal text-slate-500">Faciliteiten</span></div>
+                <div class="node node-dinamo" id="node-moeten"><span class="score-badge" id="badge-moeten">5</span>Moeten<br><span class="text-xs font-normal text-slate-500">Urgentie</span></div>
+                <div class="node node-dinamo" id="node-willen"><span class="score-badge" id="badge-willen">5</span>Willen<br><span class="text-xs font-normal text-slate-500">Motivatie</span></div>
+                <div class="node node-dinamo" id="node-kunnen"><span class="score-badge" id="badge-kunnen">5</span>Kunnen<br><span class="text-xs font-normal text-slate-500">Faciliteiten</span></div>
                 
                 <div class="node node-outcome" id="node-bereidheid">Verander-<br>bereidheid</div>
                 <div class="node node-outcome" id="node-gedrag">Nieuw<br>Gedrag</div>
@@ -429,6 +566,76 @@
             window.activeStep = 0;
         }
 
+        // === Micro-diagnose: scoring + persistence ===
+        const userScores = { moeten: 5, willen: 5, kunnen: 5 };
+        const SCORES_KEY = 'straor-dinamo-scores';
+
+        function loadScores() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(SCORES_KEY) || 'null');
+                if (saved && typeof saved === 'object') {
+                    ['moeten','willen','kunnen'].forEach(k => {
+                        if (typeof saved[k] === 'number') userScores[k] = saved[k];
+                    });
+                }
+            } catch (_) {}
+        }
+        function saveScores() {
+            localStorage.setItem(SCORES_KEY, JSON.stringify(userScores));
+        }
+        // Geometrisch gemiddelde: zwakste as trekt score naar beneden — past bij DINAMO-theorie
+        function computeBereidheid() {
+            const { moeten, willen, kunnen } = userScores;
+            return Math.cbrt(moeten * willen * kunnen);
+        }
+        // Kleur van urgentie met drempel-sprong bij 6:
+        //   0–5 → rood→oranje→geel (warme waarschuwingszone, geen groen)
+        //   6–10 → groen→teal→blauw (voldoende bereidheid)
+        // De discontinuïteit bij 6 visualiseert dat 6 de ondergrens is voor "op orde".
+        function urgencyColor(score) {
+            const s = Math.max(0, Math.min(10, score));
+            const hue = s < 6 ? s * 10 : 120 + (s - 6) * 25;
+            return `hsl(${hue}, 72%, 46%)`;
+        }
+        function updateDiagUI() {
+            ['moeten','willen','kunnen'].forEach(k => {
+                const v = userScores[k];
+                const valEl = document.getElementById('val-'+k);
+                const sliderEl = document.getElementById('slider-'+k);
+                const badgeEl = document.getElementById('badge-'+k);
+                if (valEl) { valEl.textContent = v; valEl.style.color = urgencyColor(v); }
+                if (sliderEl) sliderEl.value = v;
+                if (badgeEl) {
+                    badgeEl.textContent = v;
+                    badgeEl.style.background = urgencyColor(v);
+                }
+            });
+            const score = computeBereidheid();
+            const fill = document.getElementById('meter-fill');
+            const scoreEl = document.getElementById('meter-score');
+            if (fill) fill.style.width = (score * 10) + '%';
+            if (scoreEl) scoreEl.textContent = score.toFixed(1);
+            // Synthese-recap in step 6
+            const rm = document.getElementById('recap-moeten');
+            const rw = document.getElementById('recap-willen');
+            const rk = document.getElementById('recap-kunnen');
+            const rb = document.getElementById('recap-bereid');
+            if (rm) rm.textContent = userScores.moeten;
+            if (rw) rw.textContent = userScores.willen;
+            if (rk) rk.textContent = userScores.kunnen;
+            if (rb) rb.textContent = score.toFixed(1) + ' / 10';
+        }
+        function wireSliders() {
+            document.querySelectorAll('#intro-diag input[type="range"]').forEach(el => {
+                el.addEventListener('input', e => {
+                    const key = e.target.dataset.key;
+                    userScores[key] = Number(e.target.value);
+                    saveScores();
+                    updateDiagUI();
+                });
+            });
+        }
+
         function resetFrameworkNodes() {
             gsap.to('.node-framework', { opacity: 0, duration: 0.3 });
             LineManager.hideMapping();
@@ -438,6 +645,8 @@
         const stepHandlers = {
             0: () => {
                 window.activeStep = 0;
+                document.getElementById('intro-diag').classList.add('is-visible');
+                document.body.classList.remove('show-badges');
                 gsap.to('.node-dinamo, .node-outcome', { opacity: 0, duration: 0.5 });
                 resetFrameworkNodes();
                 LineManager.hideAll();
@@ -551,15 +760,21 @@
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Update active class on text
                     steps.forEach(s => s.classList.remove('is-active'));
                     entry.target.classList.add('is-active');
 
-                    // Trigger visualization
                     const stepIndex = parseInt(entry.target.getAttribute('data-step'));
-                    if(stepHandlers[stepIndex]) {
-                        stepHandlers[stepIndex]();
+                    // Intro-diag alleen in step 0; badges zichtbaar vanaf step 1
+                    const introDiag = document.getElementById('intro-diag');
+                    if (stepIndex === 0) {
+                        introDiag.classList.add('is-visible');
+                        document.body.classList.remove('show-badges');
+                    } else {
+                        introDiag.classList.remove('is-visible');
+                        document.body.classList.add('show-badges');
                     }
+
+                    if (stepHandlers[stepIndex]) stepHandlers[stepIndex]();
                 }
             });
         }, observerOptions);
@@ -567,6 +782,9 @@
         // Initialize
         window.addEventListener('load', () => {
             initVisualization();
+            loadScores();
+            updateDiagUI();
+            wireSliders();
             steps.forEach(step => observer.observe(step));
         });
 
